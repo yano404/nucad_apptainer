@@ -1,0 +1,59 @@
+Bootstrap: docker
+From: ubuntu:24.04
+
+%labels
+    Author Takayuki Yano
+    Version v0.0.1
+
+
+%files
+    environment.yml /opt
+
+
+%post
+    set -eux
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt update
+    apt install -y build-essential curl bzip2 ca-certificates libgl1
+
+    ARCH=$(uname -m)
+    case "$ARCH" in
+      aarch64)  MURL="https://micro.mamba.pm/api/micromamba/linux-aarch64/latest" ;;
+      x86_64)   MURL="https://micro.mamba.pm/api/micromamba/linux-64/latest" ;;
+      *)        echo "Unsupported arch: $ARCH" ; exit 1 ;;
+    esac
+
+    mkdir -p /opt/micromamba /opt/conda
+    curl -L "$MURL" -o /tmp/micromamba.tar.bz2
+    tar -xjf /tmp/micromamba.tar.bz2 -C /opt/micromamba
+    ln -s /opt/micromamba/bin/micromamba /usr/local/bin/micromamba
+
+    micromamba create -q -y -f /opt/environment.yml -p /opt/conda
+
+    # override ezdxf because ezdxf>1.1 for noarch were not provided by conda-forge
+    /opt/conda/bin/pip install "ezdxf>=1.1"
+    
+    /opt/conda/bin/pip install jupyter-cadquery pycatima nucad
+
+
+%environment
+    export CONDA_PREFIX=/opt/conda
+    export PATH=/opt/conda/bin:$PATH
+    export JUPYTERLAB_PORT=54321
+    export JUPYTER_TOKEN=""
+    export JUPYTER_PASSWORD=""
+
+
+%runscript
+    exec jupyter lab --no-browser --ip 0.0.0.0 \
+      --port $JUPYTERLAB_PORT \
+      --NotebookApp.token=$JUPYTER_TOKEN \
+      --NotebookApp.password=$JUPYTER_PASSWORD
+
+
+%startscript
+    exec jupyter lab --no-browser --ip 0.0.0.0 \
+      --port $JUPYTERLAB_PORT \
+      --NotebookApp.token=$JUPYTER_TOKEN \
+      --NotebookApp.password=$JUPYTER_PASSWORD

@@ -1,0 +1,13 @@
+name: nucad
+channels:
+  - conda-forge
+dependencies:
+  - python == 3.12
+  - tqdm
+  - jupyterlab
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - cadquery == 2.5.2
+  - ocp
