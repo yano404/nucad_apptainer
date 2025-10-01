@@ -46,14 +46,56 @@ From: ubuntu:24.04
 
 
 %runscript
+    if [ $# -gt 0 ]; then
+        OPTS=$(getopt -o p: -l port: -- "$@")
+        eval set -- "$OPTS"
+        while true; do
+            case "$1" in
+                -p|--port)
+                    JUPYTERLAB_PORT="$2"
+                    shift 2
+                    ;;
+                --)
+                    shift
+                    break
+                    ;;
+                *)
+                    echo "Unknown option: $1"
+                    exit 1
+                    ;;
+            esac
+        done
+    fi
     exec jupyter lab --no-browser --ip 0.0.0.0 \
       --port $JUPYTERLAB_PORT \
       --NotebookApp.token=$JUPYTER_TOKEN \
-      --NotebookApp.password=$JUPYTER_PASSWORD
+      --NotebookApp.password=$JUPYTER_PASSWORD \
+      --NotebookApp.allow_remote_access=True
 
 
 %startscript
+    if [ $# -gt 0 ]; then
+        OPTS=$(getopt -o p: -l port: -- "$@")
+        eval set -- "$OPTS"
+        while true; do
+            case "$1" in
+                -p|--port)
+                    JUPYTERLAB_PORT="$2"
+                    shift 2
+                    ;;
+                --)
+                    shift
+                    break
+                    ;;
+                *)
+                    echo "Unknown option: $1"
+                    exit 1
+                    ;;
+            esac
+        done
+    fi
     exec jupyter lab --no-browser --ip 0.0.0.0 \
       --port $JUPYTERLAB_PORT \
       --NotebookApp.token=$JUPYTER_TOKEN \
-      --NotebookApp.password=$JUPYTER_PASSWORD
+      --NotebookApp.password=$JUPYTER_PASSWORD \
+      --NotebookApp.allow_remote_access=True
