@@ -31,11 +31,6 @@ From: ubuntu:24.04
 
     micromamba create -q -y -f /opt/environment.yml -p /opt/conda
 
-    # override ezdxf because ezdxf>1.1 for noarch were not provided by conda-forge
-    /opt/conda/bin/pip install "ezdxf>=1.1"
-    
-    /opt/conda/bin/pip install jupyter-cadquery pycatima nucad
-
 
 %environment
     export CONDA_PREFIX=/opt/conda
