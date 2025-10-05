@@ -5,9 +5,17 @@ dependencies:
   - python == 3.12
   - tqdm
   - jupyterlab
+  - joblib
   - numpy
   - scipy
   - pandas
   - matplotlib
   - cadquery == 2.5.2
   - ocp
+  - pip
+  - pip:
+    - ezdxf>=1.1
+    - jupyter-cadquery
+    - pycatima
+    - nucad
+    - tqdm-joblib
